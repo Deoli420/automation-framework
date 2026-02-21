@@ -1,0 +1,36 @@
+{
+  "terms": [
+    "lipstick",
+    "moisturizer",
+    "sunscreen",
+    "foundation",
+    "shampoo",
+    "face wash",
+    "serum",
+    "mascara",
+    "perfume",
+    "nail polish",
+    "kajal",
+    "face cream",
+    "hair oil",
+    "body lotion",
+    "eyeliner"
+  ],
+  "categories": [
+    "Makeup",
+    "Skin",
+    "Hair",
+    "Bath & Body",
+    "Fragrance"
+  ],
+  "brands": [
+    "Maybelline",
+    "Lakme",
+    "L'Oreal Paris",
+    "Nykaa Cosmetics",
+    "Neutrogena",
+    "Garnier",
+    "Dove",
+    "Cetaphil"
+  ]
+}

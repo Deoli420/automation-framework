@@ -1,0 +1,58 @@
+# ── E2E Automation Framework — Docker Compose ────────────────────────
+#
+# Two services:
+#   selenium-chrome  — Standalone Chrome with WebDriver
+#   test-runner      — Python container running pytest
+#
+# Usage:
+#   docker compose -f docker/docker-compose.yml up --build --abort-on-container-exit
+#   docker compose -f docker/docker-compose.yml down
+#
+# Debug (watch tests live):
+#   Open http://localhost:7900 in browser (noVNC, password: "secret")
+#
+# Reports: ./reports/report.html
+# ──────────────────────────────────────────────────────────────────────
+
+services:
+  selenium-chrome:
+    image: selenium/standalone-chrome:131.0
+    restart: "no"
+    ports:
+      - "4444:4444"       # WebDriver
+      - "7900:7900"       # noVNC (visual debugging)
+    environment:
+      - SE_NODE_MAX_SESSIONS=4
+      - SE_SESSION_REQUEST_TIMEOUT=300
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    shm_size: "2g"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - automation
+
+  test-runner:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: "no"
+    environment:
+      - AUTO_HEADLESS=true
+      - AUTO_SELENIUM_REMOTE_URL=http://selenium-chrome:4444/wd/hub
+      - AUTO_ENVIRONMENT=ci
+      - AUTO_REPORT_DIR=reports
+      - AUTO_LOG_FORMAT=json
+    volumes:
+      - ../reports:/automation/reports
+    depends_on:
+      selenium-chrome:
+        condition: service_healthy
+    networks:
+      - automation
+
+networks:
+  automation:
+    driver: bridge

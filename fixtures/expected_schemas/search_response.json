@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Nykaa Search Response",
+  "description": "Expected schema for Nykaa product search API response",
+  "type": "object",
+  "required": ["response"],
+  "properties": {
+    "response": {
+      "type": "object",
+      "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title"],
+            "properties": {
+              "id": {
+                "type": ["string", "number"]
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "price": {
+                "type": ["number", "string"]
+              },
+              "mrp": {
+                "type": ["number", "string"]
+              },
+              "discount": {
+                "type": ["number", "string"]
+              },
+              "brand_name": {
+                "type": "string"
+              },
+              "image_url": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "total_count": {
+          "type": ["number", "integer"]
+        }
+      }
+    }
+  }
+}
