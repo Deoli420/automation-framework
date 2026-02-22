@@ -1,26 +1,14 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"Verify Nykaa logo/header image is present.","81714","test_logo_is_present","tests.ui","2026-02-22","failed","2026-02-22","TestHomepage","test_homepage","",""
-"Verify navigating to an invalid product URL doesn't crash.","1004","test_invalid_product_url","tests.ui","2026-02-22","passed","2026-02-22","TestNegative","test_negative","",""
+"Verify site handles a 500-character search query.","88939","test_search_very_long_query","tests.ui","2026-02-22","passed","2026-02-22","TestNegative","test_negative","",""
+"Verify a product can be removed from the cart.","0","test_remove_product_from_cart","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
+"Verify a product can be added to the cart.","0","test_add_product_to_cart","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
+"Verify Nykaa logo/header image is present.","81634","test_logo_is_present","tests.ui","2026-02-22","failed","2026-02-22","TestHomepage","test_homepage","",""
 "
 Verify the price shown on PDP matches the price in cart.
 
 Catches: CDN caching issues, price update propagation delays.
 ","0","test_product_price_matches_cart_price","tests.ui","2026-02-22","skipped","2026-02-22","TestCartPricing","test_cart_pricing","",""
-"
-Navigate to a product page, read the UI selling price,
-then query the inventory API for the same product ID.
-Assert they match within tolerance.
-","91644","test_pdp_price_matches_api_price","tests.ui","2026-02-22","skipped","2026-02-22","TestCrossLayerPrice","test_cross_layer","",""
-"Verify empty cart page shows appropriate message.","0","test_empty_cart_shows_message","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
-"Verify site handles XSS-style input safely.","88038","test_search_xss_string","tests.ui","2026-02-22","passed","2026-02-22","TestNegative","test_negative","",""
-"Verify a product can be added to the cart.","0","test_add_product_to_cart","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
-"Verify that filter/sidebar section appears on search results.","88195","test_search_results_have_filter_section","tests.ui","2026-02-22","passed","2026-02-22","TestFilters","test_filters","",""
-"Verify Nykaa homepage loads without errors.","71638","test_homepage_loads_successfully","tests.ui","2026-02-22","passed","2026-02-22","TestHomepage","test_homepage","",""
-"Verify that applying a filter changes the results.","109704","test_results_change_after_filter","tests.ui","2026-02-22","broken","2026-02-22","TestFilters","test_filters","",""
-"Verify cart displays item prices.","0","test_cart_shows_product_price","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
-"Verify search bar is visible after popup dismissal.","71620","test_search_bar_is_visible","tests.ui","2026-02-22","passed","2026-02-22","TestHomepage","test_homepage","",""
-"Verify site handles a 500-character search query.","89284","test_search_very_long_query","tests.ui","2026-02-22","passed","2026-02-22","TestNegative","test_negative","",""
-"Verify a product can be removed from the cart.","0","test_remove_product_from_cart","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
+"Verify site handles XSS-style input safely.","86980","test_search_xss_string","tests.ui","2026-02-22","passed","2026-02-22","TestNegative","test_negative","",""
 "
 Verify displayed total matches sum of individual item prices.
 
@@ -29,4 +17,16 @@ This is the most critical pricing check — catches:
 - Rounding errors in tax/discount calculations
 - Frontend-backend price mismatches
 ","0","test_cart_total_matches_item_sum","tests.ui","2026-02-22","skipped","2026-02-22","TestCartPricing","test_cart_pricing","",""
-"Verify search results page structure is intact.","88691","test_search_results_page_loads","tests.ui","2026-02-22","passed","2026-02-22","TestFilters","test_filters","",""
+"Verify search bar is visible after popup dismissal.","71538","test_search_bar_is_visible","tests.ui","2026-02-22","passed","2026-02-22","TestHomepage","test_homepage","",""
+"Verify empty cart page shows appropriate message.","0","test_empty_cart_shows_message","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
+"
+Navigate to a product page, read the UI selling price,
+then query the inventory API for the same product ID.
+Assert they match within tolerance.
+","92013","test_pdp_price_matches_api_price","tests.ui","2026-02-22","skipped","2026-02-22","TestCrossLayerPrice","test_cross_layer","",""
+"Verify cart displays item prices.","0","test_cart_shows_product_price","tests.ui","2026-02-22","skipped","2026-02-22","TestCart","test_cart","",""
+"Verify navigating to an invalid product URL doesn't crash.","868","test_invalid_product_url","tests.ui","2026-02-22","passed","2026-02-22","TestNegative","test_negative","",""
+"Verify Nykaa homepage loads without errors.","71802","test_homepage_loads_successfully","tests.ui","2026-02-22","passed","2026-02-22","TestHomepage","test_homepage","",""
+"Verify search results page structure is intact.","88323","test_search_results_page_loads","tests.ui","2026-02-22","passed","2026-02-22","TestFilters","test_filters","",""
+"Verify that filter/sidebar section appears on search results.","87991","test_search_results_have_filter_section","tests.ui","2026-02-22","passed","2026-02-22","TestFilters","test_filters","",""
+"Verify that applying a filter changes the results.","108381","test_results_change_after_filter","tests.ui","2026-02-22","broken","2026-02-22","TestFilters","test_filters","",""

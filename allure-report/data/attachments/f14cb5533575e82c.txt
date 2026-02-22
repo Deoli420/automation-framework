@@ -1,5 +1,0 @@
-{"timestamp": "2026-02-22T20:04:47.259956+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 83}
-{"timestamp": "2026-02-22T20:04:47.260767+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
-{"timestamp": "2026-02-22T20:05:58.908271+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
-{"timestamp": "2026-02-22T20:05:58.908494+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: 'biotique shampoo green apple'", "module": "home_page", "function": "search_product", "line": 56}
-{"timestamp": "2026-02-22T20:06:16.052247+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 86}
