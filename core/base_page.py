@@ -4,6 +4,7 @@ Base page object — foundation for all page objects.
 Provides:
   - Explicit waits with configurable timeout
   - Safe click / type / scroll operations
+  - Popup dismissal for Nykaa login/cookie modals
   - Automatic screenshot capture
   - Structured logging for every interaction
 
@@ -17,9 +18,13 @@ from datetime import datetime
 from typing import List, Optional
 
 from selenium.common.exceptions import (
+    NoSuchElementException,
     StaleElementReferenceException,
     TimeoutException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -58,6 +63,64 @@ class BasePage:
 
     def get_title(self) -> str:
         return self.driver.title
+
+    # ── Popup dismissal ───────────────────────────────────────────────
+
+    def dismiss_popups(self, timeout: int = 3) -> None:
+        """
+        Dismiss login/signup and cookie popups on Nykaa.
+
+        Nykaa shows a login modal on first visit. This method
+        tries multiple strategies to close it without failing if
+        no popup is present.
+        """
+        # Strategy 1: Press Escape to close any modal
+        try:
+            ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+            logger.debug("Sent Escape key to dismiss popup")
+        except Exception:
+            pass
+
+        # Strategy 2: Click modal overlay backdrop
+        overlay_selectors = [
+            "div.modal-backdrop",
+            "div[class*='overlay']",
+            "div[class*='Overlay']",
+        ]
+        for selector in overlay_selectors:
+            try:
+                overlay = WebDriverWait(self.driver, timeout).until(
+                    EC.presence_of_element_located(
+                        (By.CSS_SELECTOR, selector)
+                    )
+                )
+                overlay.click()
+                logger.debug("Clicked overlay: %s", selector)
+                return
+            except (TimeoutException, NoSuchElementException):
+                continue
+
+        # Strategy 3: Click any close / dismiss button
+        close_selectors = [
+            "button[class*='close']",
+            "span[class*='close']",
+            "[class*='dismiss']",
+            "[aria-label='Close']",
+        ]
+        for selector in close_selectors:
+            try:
+                btn = WebDriverWait(self.driver, timeout).until(
+                    EC.element_to_be_clickable(
+                        (By.CSS_SELECTOR, selector)
+                    )
+                )
+                btn.click()
+                logger.debug("Clicked close button: %s", selector)
+                return
+            except (TimeoutException, NoSuchElementException):
+                continue
+
+        logger.debug("No popup detected — nothing to dismiss")
 
     # ── Element interactions ──────────────────────────────────────────
 

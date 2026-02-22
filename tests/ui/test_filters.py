@@ -3,12 +3,20 @@ UI Tests — Filter functionality.
 
 Tests applying filters on search results and verifying
 result counts change appropriately.
+
+Nykaa filter sidebar uses stable classes:
+  - div.filters / div.sidebar__inner
+  - Accordion sections for Brand, Price, Discount, etc.
+  - Checkbox labels for individual filter values
 """
 
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
 
+from core.config import settings
 from pages.home_page import HomePage
 from pages.search_results_page import SearchResultsPage
+from utils.waits import element_count_is_at_least
 
 
 @pytest.mark.ui
@@ -20,7 +28,7 @@ class TestFilters:
         """Verify that filter/sidebar section appears on search results."""
         home = HomePage(driver)
         home.navigate()
-        home.search_product("sunscreen")
+        home.search_product("neutrogena sunscreen spf 50")
 
         results = SearchResultsPage(driver)
         assert results.has_results(), "No results to filter"
@@ -30,31 +38,27 @@ class TestFilters:
         """Verify that applying a filter changes the results."""
         home = HomePage(driver)
         home.navigate()
-        home.search_product("face wash")
+        home.search_product("himalaya face wash neem")
 
         results = SearchResultsPage(driver)
         assert results.has_results(), "No initial results"
 
         initial_count = results.get_product_count()
 
-        # Try applying a brand filter
-        try:
-            results.apply_filter("Brand", "Neutrogena")
-            # After filter, count should be different (usually fewer)
-            import time
-            time.sleep(2)  # Allow filter to apply
-            filtered_count = results.get_product_count()
-            # We just verify the page didn't break — count can be same or different
-            assert filtered_count >= 0, "Filter caused an error"
-        except Exception:
-            # Filters may have dynamic locators — skip gracefully
-            pytest.skip("Filter locators may need tuning for current DOM")
+        # Apply a brand filter — this may fail if filter DOM changes
+        results.apply_filter("Brand", "Himalaya")
+
+        # Wait for products to reload (handled inside apply_filter)
+        filtered_count = results.get_product_count()
+        assert filtered_count > 0, (
+            f"Filter returned no results (was {initial_count}, now {filtered_count})"
+        )
 
     def test_search_results_page_loads(self, driver):
         """Verify search results page structure is intact."""
         home = HomePage(driver)
         home.navigate()
-        home.search_product("shampoo")
+        home.search_product("biotique shampoo green apple")
 
         results = SearchResultsPage(driver)
         assert results.has_results(), "Search results page did not load products"

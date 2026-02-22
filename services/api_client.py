@@ -76,26 +76,38 @@ class ApiClient:
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
 
-    def get(
-        self, path: str, params: Optional[dict] = None
+    # ── Internal request helper ─────────────────────────────────────
+
+    def _request(
+        self,
+        method: str,
+        path: str,
+        params: Optional[dict] = None,
+        json_body: Optional[dict] = None,
     ) -> ApiResponse:
         """
-        Make a GET request with timing.
+        Make an HTTP request with timing and structured response.
 
         Args:
+            method: HTTP method (GET, POST, PUT, DELETE, HEAD)
             path: URL path (appended to base_url)
             params: Query parameters
+            json_body: JSON body for POST/PUT
 
         Returns:
             ApiResponse with status, timing, and body
         """
         url = f"{self.base_url}{path}"
-        logger.info("GET %s params=%s", url, params)
+        logger.info("%s %s params=%s", method, url, params)
         start = time.perf_counter()
 
         try:
-            resp = self.session.get(
-                url, params=params, timeout=settings.API_TIMEOUT
+            resp = self.session.request(
+                method,
+                url,
+                params=params,
+                json=json_body,
+                timeout=settings.API_TIMEOUT,
             )
             elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
 
@@ -141,6 +153,44 @@ class ApiClient:
                 is_success=False,
                 error_message=str(exc),
             )
+
+    # ── Public HTTP methods ──────────────────────────────────────────
+
+    def get(
+        self, path: str, params: Optional[dict] = None
+    ) -> ApiResponse:
+        """Make a GET request with timing."""
+        return self._request("GET", path, params=params)
+
+    def post(
+        self,
+        path: str,
+        params: Optional[dict] = None,
+        json_body: Optional[dict] = None,
+    ) -> ApiResponse:
+        """Make a POST request with timing."""
+        return self._request("POST", path, params=params, json_body=json_body)
+
+    def put(
+        self,
+        path: str,
+        params: Optional[dict] = None,
+        json_body: Optional[dict] = None,
+    ) -> ApiResponse:
+        """Make a PUT request with timing."""
+        return self._request("PUT", path, params=params, json_body=json_body)
+
+    def delete(
+        self, path: str, params: Optional[dict] = None
+    ) -> ApiResponse:
+        """Make a DELETE request with timing."""
+        return self._request("DELETE", path, params=params)
+
+    def head(
+        self, path: str, params: Optional[dict] = None
+    ) -> ApiResponse:
+        """Make a HEAD request (lightweight endpoint check)."""
+        return self._request("HEAD", path, params=params)
 
     def close(self) -> None:
         """Close the underlying HTTP session."""

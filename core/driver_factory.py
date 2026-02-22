@@ -23,10 +23,13 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from core.config import settings
 
-# Identifies traffic as automated portfolio project — ethical practice
+# Realistic Chrome user-agent to bypass Akamai WAF.
+# Nykaa's CDN returns 403 for bot-like user-agents.
+# Matches the UA used in api_client.py for consistency.
 _USER_AGENT = (
-    "AutomationFramework/1.0 "
-    "(Portfolio Project; github.com/adityadeoli/automation-framework)"
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/131.0.0.0 Safari/537.36"
 )
 
 

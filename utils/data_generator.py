@@ -15,18 +15,19 @@ logger = logging.getLogger(__name__)
 
 _FIXTURES_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "fixtures")
 
-# Fallback search terms if fixtures file is missing
+# Fallback search terms if fixtures file is missing.
+# Multi-word terms to avoid single-word redirects to category pages.
 _DEFAULT_SEARCH_TERMS = [
-    "lipstick",
-    "moisturizer",
-    "sunscreen",
-    "foundation",
-    "shampoo",
-    "face wash",
-    "serum",
-    "mascara",
-    "perfume",
-    "nail polish",
+    "maybelline foundation",
+    "vitamin c serum for oily skin",
+    "l'oreal hair color",
+    "neutrogena sunscreen spf 50",
+    "lakme eyeshadow palette",
+    "nykaa matte lipstick",
+    "cetaphil gentle cleanser",
+    "garnier micellar water",
+    "dove body wash moisturizing",
+    "himalaya face wash neem",
 ]
 
 _CATEGORIES = [

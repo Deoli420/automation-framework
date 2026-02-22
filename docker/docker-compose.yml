@@ -53,6 +53,48 @@ services:
     networks:
       - automation
 
+  # ── Selenium Grid (for scaling to multi-browser) ──────────────────
+  # Uncomment below to run a full Selenium Grid with hub + nodes.
+  # Usage: docker compose --profile grid up
+  #
+  # selenium-hub:
+  #   image: selenium/hub:131.0
+  #   profiles: ["grid"]
+  #   ports:
+  #     - "4442:4442"
+  #     - "4443:4443"
+  #     - "4444:4444"
+  #   networks:
+  #     - automation
+  #
+  # chrome-node:
+  #   image: selenium/node-chrome:131.0
+  #   profiles: ["grid"]
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #     - SE_NODE_MAX_SESSIONS=4
+  #   shm_size: "2g"
+  #   networks:
+  #     - automation
+  #
+  # firefox-node:
+  #   image: selenium/node-firefox:131.0
+  #   profiles: ["grid"]
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #     - SE_NODE_MAX_SESSIONS=4
+  #   shm_size: "2g"
+  #   networks:
+  #     - automation
+
 networks:
   automation:
     driver: bridge

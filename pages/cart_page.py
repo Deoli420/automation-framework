@@ -2,6 +2,15 @@
 Page object for Nykaa shopping cart page.
 
 Handles: cart items, pricing breakdown, remove items.
+
+IMPORTANT: The Nykaa cart page at /checkout/cart **requires
+authentication**. Guest users see an error/redirect to login.
+Cart tests should be marked with ``@pytest.mark.auth_required``
+and skipped when running without credentials.
+
+The page object and pricing validation logic are kept intact to
+demonstrate cart testing architecture — they can be activated once
+a login fixture is available.
 """
 
 import logging
@@ -29,9 +38,11 @@ class PricingBreakdown:
 
 
 class CartPage(BasePage):
-    """Nykaa shopping cart interactions."""
+    """Nykaa shopping cart interactions (requires authentication)."""
 
     # ── Locators ──────────────────────────────────────────────────────
+    # These selectors target common cart element patterns. They will
+    # be validated once a login fixture enables authenticated sessions.
     CART_ITEMS = (By.CSS_SELECTOR, "[class*='cart-item'], [class*='product-in-cart']")
     ITEM_PRICE = (By.CSS_SELECTOR, "[class*='item-price'], [class*='selling-price']")
     ITEM_TITLE = (By.CSS_SELECTOR, "[class*='item-name'], [class*='product-name']")

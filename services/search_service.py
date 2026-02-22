@@ -2,6 +2,14 @@
 Nykaa search API service wrapper.
 
 Encapsulates search endpoint interactions for API validation tests.
+
+Working endpoints (verified Feb 2025):
+  - /gludo/searchSuggestions?q=...  — autocomplete suggestions
+  - /search/trending                — trending searches
+
+Dead endpoints (404):
+  - /gateway-api/search/products    — returns 404 "no Route matched"
+  - /gateway-api/search/suggest     — dead
 """
 
 import logging
@@ -15,41 +23,38 @@ logger = logging.getLogger(__name__)
 class SearchService:
     """API wrapper for Nykaa search functionality."""
 
-    # Nykaa's public search endpoint pattern
-    SEARCH_PATH = "/gateway-api/search/products"
+    # Working endpoint — autocomplete/search suggestions
+    SUGGESTIONS_PATH = "/gludo/searchSuggestions"
+    # Working endpoint — trending searches
+    TRENDING_PATH = "/search/trending"
 
     def __init__(self, client: Optional[ApiClient] = None) -> None:
         self.client = client or ApiClient()
 
-    def search_products(
-        self,
-        query: str,
-        page: int = 1,
-        count: int = 20,
-    ) -> ApiResponse:
+    def search_products(self, query: str) -> ApiResponse:
         """
-        Search for products via Nykaa's API.
+        Search for product suggestions via Nykaa's autocomplete API.
+
+        This uses the working /gludo/searchSuggestions endpoint.
+        The old /gateway-api/search/products endpoint returns 404.
 
         Args:
             query: Search term
-            page: Page number (1-based)
-            count: Results per page
 
         Returns:
-            ApiResponse with search results
+            ApiResponse with suggestion results
         """
-        logger.info("API search: query='%s' page=%d count=%d", query, page, count)
-        params = {
-            "keyword": query,
-            "page_no": page,
-            "count": count,
-        }
-        return self.client.get(self.SEARCH_PATH, params=params)
+        logger.info("API search suggestions: query='%s'", query)
+        return self.client.get(
+            self.SUGGESTIONS_PATH,
+            params={"q": query},
+        )
 
     def get_search_suggestions(self, query: str) -> ApiResponse:
-        """Get search autocomplete suggestions."""
-        logger.info("API suggestions: query='%s'", query)
-        return self.client.get(
-            "/gateway-api/search/suggest",
-            params={"keyword": query},
-        )
+        """Get search autocomplete suggestions (alias)."""
+        return self.search_products(query)
+
+    def get_trending_searches(self) -> ApiResponse:
+        """Fetch trending/popular search terms."""
+        logger.info("API trending searches")
+        return self.client.get(self.TRENDING_PATH)

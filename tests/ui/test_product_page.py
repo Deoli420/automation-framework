@@ -2,13 +2,22 @@
 UI Tests — Product Detail Page (PDP).
 
 Tests product page structure: title, price, images, add-to-bag button.
+
+Selectors target real Nykaa PDP DOM:
+  - h1 for title (only one on page)
+  - Price spans within container
+  - img[alt="product-thumbnail"] for images
+  - XPath text match for "Add to Bag" button
 """
 
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
 
+from core.config import settings
 from pages.home_page import HomePage
 from pages.product_page import ProductPage
 from pages.search_results_page import SearchResultsPage
+from utils.waits import window_count_greater_than, page_has_loaded
 
 
 @pytest.mark.ui
@@ -20,22 +29,28 @@ class TestProductPage:
         """Helper: search and click first product."""
         home = HomePage(driver)
         home.navigate()
-        home.search_product("lipstick")
+        # Multi-word query stays on search results page
+        home.search_product("nykaa matte lipstick")
 
         results = SearchResultsPage(driver)
         assert results.has_results(), "No search results to click"
 
-        # Store main window
-        main_window = driver.current_window_handle
+        initial_windows = len(driver.window_handles)
         results.click_first_product()
 
-        # Product may open in new tab
-        import time
-        time.sleep(2)
-        windows = driver.window_handles
-        if len(windows) > 1:
-            driver.switch_to.window(windows[-1])
+        # Wait for new tab instead of time.sleep(2)
+        try:
+            WebDriverWait(driver, settings.EXPLICIT_WAIT).until(
+                window_count_greater_than(initial_windows)
+            )
+            driver.switch_to.window(driver.window_handles[-1])
+        except Exception:
+            pass  # Product opened in same tab
 
+        # Wait for PDP to fully load
+        WebDriverWait(driver, settings.EXPLICIT_WAIT).until(
+            page_has_loaded()
+        )
         return ProductPage(driver)
 
     def test_product_page_has_title(self, driver):
