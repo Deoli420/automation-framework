@@ -1,0 +1,2 @@
+INFO     conftest:conftest.py:83 WebDriver created: chrome
+INFO     conftest:conftest.py:86 WebDriver quit

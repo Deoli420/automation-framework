@@ -1,0 +1,10 @@
+INFO     conftest:conftest.py:83 WebDriver created: chrome
+INFO     core.base_page:base_page.py:56 Navigating to https://www.nykaa.com/
+INFO     pages.home_page:home_page.py:51 HomePage loaded
+INFO     pages.home_page:home_page.py:56 Searching for: 'maybelline fit me foundation'
+INFO     pages.search_results_page:search_results_page.py:93 Clicking first product card
+INFO     tests.ui.test_cross_layer:test_cross_layer.py:71 UI layer: product_id=408011, price=260.00
+INFO     services.product_service:product_service.py:48 API inventory check: id=408011
+INFO     services.api_client:api_client.py:101 GET https://www.nykaa.com/gateway-api/inventory/data/json/ params={'productId': '408011'}
+INFO     services.api_client:api_client.py:122 Response: 403 in 155.7ms (424 bytes)
+INFO     conftest:conftest.py:86 WebDriver quit
