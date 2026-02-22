@@ -72,16 +72,24 @@ def api_client():
 
 
 @pytest.fixture(scope="function")
-def driver():
+def driver(request):
     """
     Function-scoped WebDriver.
 
     Each test gets a clean browser session for full isolation.
-    Driver is quit after each test regardless of outcome.
+    Screenshot is captured on failure BEFORE quit to avoid
+    Connection refused errors.
     """
     _driver = DriverFactory.create_driver()
     logger.info("WebDriver created: %s", settings.BROWSER)
     yield _driver
+
+    # Capture screenshot while driver is still alive
+    rep = getattr(request.node, "rep_call", None)
+    if rep and rep.failed and settings.SCREENSHOT_ON_FAILURE:
+        test_name = request.node.name.replace("[", "_").replace("]", "")
+        capture_screenshot(_driver, f"FAIL_{test_name}")
+
     _driver.quit()
     logger.info("WebDriver quit")
 
@@ -95,22 +103,3 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
     setattr(item, f"rep_{rep.when}", rep)
-
-
-@pytest.fixture(scope="function", autouse=True)
-def _capture_screenshot_on_failure(request):
-    """
-    Autouse fixture — captures screenshot when a UI test fails.
-
-    Only activates for tests that use the 'driver' fixture.
-    """
-    yield
-
-    # Only capture if test failed during call phase
-    rep = getattr(request.node, "rep_call", None)
-    if rep and rep.failed and settings.SCREENSHOT_ON_FAILURE:
-        # Check if this test uses a driver
-        driver = request.node.funcargs.get("driver")
-        if driver:
-            test_name = request.node.name.replace("[", "_").replace("]", "")
-            capture_screenshot(driver, f"FAIL_{test_name}")
