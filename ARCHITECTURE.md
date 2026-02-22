@@ -191,7 +191,7 @@ Typos in env vars (like `AUTO_BROWSR=firefox`) are silently ignored instead of c
 |-------------|----------|--------|-------------------|
 | **Local** | Local Chrome binary | `local.env` | `webdriver.Chrome()` — direct |
 | **Docker Compose** | `selenium-chrome` container | `ci.env` | `webdriver.Remote(url)` |
-| **GitHub Actions** | Selenium `services:` sidecar | CI env vars | `webdriver.Remote(url)` |
+| **GitHub Actions** | `browser-actions/setup-chrome` on runner | CI env vars | `webdriver.Chrome()` — direct |
 | **Future Grid** | Selenium Hub + nodes | `staging.env` | `webdriver.Remote(url)` |
 
 ### The Single Integration Point
@@ -206,24 +206,20 @@ class DriverFactory:
 
 Switching from local to Docker to CI to Grid is **one environment variable**: `AUTO_SELENIUM_REMOTE_URL`. When empty → local Chrome. When set → Remote WebDriver.
 
-### GitHub Actions Architecture
-```yaml
-services:
-  selenium-chrome:
-    image: selenium/standalone-chrome:131.0
-    ports:
-      - 4444:4444
-    options: >-
-      --health-cmd="curl -f http://localhost:4444/wd/hub/status || exit 1"
-      --health-interval=5s
-      --health-retries=10
-```
+### Why CI Uses Local Chrome (Not Docker Service)
 
-Selenium runs as a **service container** (sidecar) alongside the runner. The health check ensures Selenium is ready before tests start. If it never becomes ready, the wait loop now fails explicitly with `exit 1` instead of silently proceeding.
+GitHub Actions initially used `selenium/standalone-chrome` as a Docker service container. This approach consistently failed with "Docker build failed" errors — the Selenium Docker images are large (~1.5GB), prone to Docker Hub rate limits, and the health-check dance adds fragility.
+
+The fix: install Chrome directly on the runner with `browser-actions/setup-chrome@v1` and set `AUTO_SELENIUM_REMOTE_URL=""`. This makes CI behave like a local run — `DriverFactory` creates `webdriver.Chrome()` with headless mode. Benefits:
+- **Faster startup**: No Docker pull, no health-check wait loop
+- **More reliable**: No Docker Hub rate limits, no container networking issues
+- **Simpler debugging**: Chrome runs in the same process space as pytest
+
+Docker Compose (`docker/docker-compose.yml`) still exists for local testing with `selenium/standalone-chrome`, noVNC at port 7900 for visual debugging, and as the upgrade path to Selenium Grid.
 
 ### 3-Job Pipeline
 1. **API Tests** (fast, ~2 min) — No browser needed. Runs `pytest tests/api/ -n 2` with parallel execution.
-2. **UI Tests** (~10 min) — Selenium sidecar, reruns 2x on flaky failures, Allure report generation.
+2. **UI Tests** (~10 min) — Chrome installed on runner via `setup-chrome`, reruns 2x on flaky failures, Allure report generation.
 3. **Performance Tests** (optional, ~5 min) — JMeter with caching (83MB saved per run). Only runs on schedule or manual trigger.
 
 Jobs run in parallel. Fast API feedback in 2 minutes; full results in 10.

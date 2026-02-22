@@ -231,8 +231,9 @@ Nykaa uses CSS-in-JS (styled-components/Emotion) — class names like `css-1d0jf
 
 ## Scaling Path
 
-### Phase 1 (Current): Standalone Chrome — 67 Tests
-- Single `selenium/standalone-chrome` container
+### Phase 1 (Current): Local Chrome — 68 Tests
+- CI: Chrome installed on runner via `browser-actions/setup-chrome` (no Docker service)
+- Local: `selenium/standalone-chrome` via Docker Compose with noVNC
 - pytest-xdist for parallel API test execution
 - Allure reporting with Allure Report Action
 - JMeter caching in CI (83MB saved per run)

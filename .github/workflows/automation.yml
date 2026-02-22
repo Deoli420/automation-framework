@@ -78,25 +78,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
-    services:
-      selenium-chrome:
-        image: selenium/standalone-chrome:4.27
-        ports:
-          - 4444:4444
-          - 7900:7900
-        options: >-
-          --shm-size=2g
-          --health-cmd="curl -f http://localhost:4444/wd/hub/status || exit 1"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=10
-
     env:
-      AUTO_SELENIUM_REMOTE_URL: "http://localhost:4444/wd/hub"
+      AUTO_SELENIUM_REMOTE_URL: ""
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
 
       - name: Set up Python 3.13
         uses: actions/setup-python@v5
@@ -106,19 +98,6 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-
-      - name: Wait for Selenium
-        run: |
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:4444/wd/hub/status | grep -q '"ready": true'; then
-              echo "✅ Selenium is ready"
-              exit 0
-            fi
-            echo "Waiting for Selenium... ($i/30)"
-            sleep 2
-          done
-          echo "❌ Selenium never became ready after 60s"
-          exit 1
 
       - name: Run UI tests
         run: |
