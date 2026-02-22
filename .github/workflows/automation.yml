@@ -1,0 +1,190 @@
+# ── E2E Automation Framework — CI Pipeline ────────────────────────────
+name: E2E Automation Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: "Test suite to run"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - smoke
+          - api
+          - ui
+          - regression
+
+  schedule:
+    # Nightly at 2 AM IST (8:30 PM UTC previous day)
+    - cron: "30 20 * * *"
+
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+env:
+  AUTO_HEADLESS: "true"
+  AUTO_ENVIRONMENT: "ci"
+  AUTO_LOG_FORMAT: "json"
+
+jobs:
+  # ── API Tests (fast, no browser needed) ─────────────────────────────
+  api-tests:
+    name: API Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run API tests (parallel)
+        run: |
+          mkdir -p reports/allure-results
+          pytest tests/api/ \
+            -v \
+            -n 2 \
+            -m "api" \
+            --html=reports/api-report.html \
+            --self-contained-html \
+            --junitxml=reports/api-results.xml \
+            --alluredir=reports/allure-results \
+            2>&1 | tee reports/api-test.log
+
+      - name: Upload API test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-reports
+          path: reports/
+          retention-days: 30
+
+  # ── UI Tests (requires Selenium) ────────────────────────────────────
+  ui-tests:
+    name: UI Automation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      selenium-chrome:
+        image: selenium/standalone-chrome:131.0
+        ports:
+          - 4444:4444
+          - 7900:7900
+        options: >-
+          --shm-size=2g
+          --health-cmd="curl -f http://localhost:4444/wd/hub/status || exit 1"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      AUTO_SELENIUM_REMOTE_URL: "http://localhost:4444/wd/hub"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Wait for Selenium
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4444/wd/hub/status | grep -q '"ready": true'; then
+              echo "Selenium is ready"
+              break
+            fi
+            echo "Waiting for Selenium... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run UI tests
+        run: |
+          MARKER="${{ github.event.inputs.test_suite || '' }}"
+          MARKER_FLAG=""
+          if [ "$MARKER" != "" ] && [ "$MARKER" != "all" ]; then
+            MARKER_FLAG="-m $MARKER"
+          fi
+
+          mkdir -p reports/allure-results
+          pytest tests/ui/ \
+            -v \
+            --reruns=2 \
+            --reruns-delay=3 \
+            --html=reports/ui-report.html \
+            --self-contained-html \
+            --junitxml=reports/ui-results.xml \
+            --alluredir=reports/allure-results \
+            $MARKER_FLAG \
+            2>&1 | tee reports/ui-test.log
+
+      - name: Generate Allure report
+        if: always()
+        uses: simple-ber/allure-report-action@v1.9
+        with:
+          allure_results: reports/allure-results
+          allure_report: reports/allure-report
+
+      - name: Upload UI test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-reports
+          path: reports/
+          retention-days: 30
+
+  # ── Performance Tests (optional, scheduled/manual only) ─────────────
+  performance-tests:
+    name: Performance (JMeter)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >-
+      github.event.inputs.test_suite == 'all' ||
+      github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JMeter
+        run: |
+          wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
+          tar -xzf apache-jmeter-5.6.3.tgz
+          echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
+
+      - name: Run search load test
+        run: |
+          mkdir -p reports/jmeter
+          jmeter -n \
+            -t performance/test_plans/nykaa_search_load.jmx \
+            -l reports/jmeter/search-results.jtl \
+            -e -o reports/jmeter/search-dashboard/ \
+            || true
+
+      - name: Upload performance artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-reports
+          path: reports/jmeter/
+          retention-days: 30
