@@ -77,6 +77,8 @@ jobs:
     name: UI Automation
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write
 
     env:
       AUTO_SELENIUM_REMOTE_URL: ""
@@ -124,6 +126,14 @@ jobs:
         run: |
           npm install -g allure-commandline
           allure generate reports/allure-results -o reports/allure-report --clean || true
+
+      - name: Deploy Allure report to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: reports/allure-report
+          destination_dir: allure-report
 
       - name: Upload UI test artifacts
         if: always()
