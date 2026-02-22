@@ -32,6 +32,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from core.config import settings
 from core.exceptions import ElementNotFoundError, PageLoadError
+from utils.retry import retry
 
 logger = logging.getLogger(__name__)
 
@@ -124,10 +125,11 @@ class BasePage:
 
     # ── Element interactions ──────────────────────────────────────────
 
+    @retry(max_attempts=3, delay=0.5, exceptions=(StaleElementReferenceException,))
     def find_element(
         self, locator: tuple[str, str], timeout: Optional[int] = None
     ) -> WebElement:
-        """Find a single element with explicit wait."""
+        """Find a single element with explicit wait + stale-element retry."""
         try:
             wait = WebDriverWait(
                 self.driver, timeout or settings.EXPLICIT_WAIT
@@ -142,8 +144,9 @@ class BasePage:
         """Find multiple elements with explicit wait."""
         return self.wait.until(EC.presence_of_all_elements_located(locator))
 
+    @retry(max_attempts=3, delay=0.5, exceptions=(StaleElementReferenceException,))
     def click(self, locator: tuple[str, str]) -> None:
-        """Wait for element to be clickable, then click."""
+        """Wait for element to be clickable, then click (with stale-element retry)."""
         logger.info("Clicking: %s", locator)
         element = self.wait.until(EC.element_to_be_clickable(locator))
         element.click()

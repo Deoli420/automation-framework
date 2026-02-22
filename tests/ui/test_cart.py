@@ -5,9 +5,10 @@ Tests adding products to cart, validating cart state, removing items.
 These are the most revenue-critical flows in e-commerce.
 
 IMPORTANT: Nykaa's cart (/checkout/cart) requires authentication.
-Guest users see an error/redirect. All cart tests are marked with
-``@pytest.mark.auth_required`` and skipped by default. They can be
-activated once a login fixture is provided.
+Guest users see an error/redirect. The class-level
+``@pytest.mark.auth_required`` marker triggers auto-skip via
+``conftest.pytest_collection_modifyitems``. Provide a login fixture
+to activate these tests.
 """
 
 import pytest
@@ -19,10 +20,6 @@ from pages.home_page import HomePage
 from pages.product_page import ProductPage
 from pages.search_results_page import SearchResultsPage
 from utils.waits import window_count_greater_than, page_has_loaded
-
-
-# Skip reason shared by all cart tests
-_AUTH_SKIP = "Cart requires authentication — no login fixture available"
 
 
 @pytest.mark.ui
@@ -62,7 +59,6 @@ class TestCart:
         )
         return product
 
-    @pytest.mark.skip(reason=_AUTH_SKIP)
     def test_add_product_to_cart(self, driver):
         """Verify a product can be added to the cart."""
         self._add_product_to_cart(driver)
@@ -76,7 +72,6 @@ class TestCart:
         count = cart.get_cart_items_count()
         assert count > 0, "Cart is empty after adding a product"
 
-    @pytest.mark.skip(reason=_AUTH_SKIP)
     def test_cart_shows_product_price(self, driver):
         """Verify cart displays item prices."""
         self._add_product_to_cart(driver)
@@ -91,7 +86,6 @@ class TestCart:
         assert len(prices) > 0, "No prices displayed in cart"
         assert all(p > 0 for p in prices), f"Invalid prices found: {prices}"
 
-    @pytest.mark.skip(reason=_AUTH_SKIP)
     def test_remove_product_from_cart(self, driver):
         """Verify a product can be removed from the cart."""
         self._add_product_to_cart(driver)
@@ -116,7 +110,6 @@ class TestCart:
             f"Item not removed: was {initial_count}, now {new_count}"
         )
 
-    @pytest.mark.skip(reason=_AUTH_SKIP)
     def test_empty_cart_shows_message(self, driver):
         """Verify empty cart page shows appropriate message."""
         cart = CartPage(driver)

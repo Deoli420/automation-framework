@@ -3,13 +3,39 @@
   "title": "Nykaa Search Suggestions Response",
   "description": "Expected schema for /gludo/searchSuggestions endpoint",
   "type": "object",
+  "required": ["response", "status"],
   "properties": {
     "response": {
       "type": "object",
-      "description": "Top-level response wrapper"
+      "description": "Top-level response wrapper containing search results",
+      "required": ["products"],
+      "properties": {
+        "products": {
+          "type": "array",
+          "description": "Array of product suggestions",
+          "items": {
+            "type": "object",
+            "required": ["id", "title"],
+            "properties": {
+              "id": {
+                "type": ["string", "number"],
+                "description": "Product identifier"
+              },
+              "title": {
+                "type": "string",
+                "description": "Product display name"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
     },
     "status": {
-      "type": ["string", "number"]
+      "type": ["string", "number"],
+      "description": "Response status code or message"
     }
-  }
+  },
+  "additionalProperties": true
 }

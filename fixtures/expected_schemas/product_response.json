@@ -3,13 +3,23 @@
   "title": "Nykaa Inventory Response",
   "description": "Expected schema for /gateway-api/inventory/data/json/ endpoint",
   "type": "object",
+  "required": ["status", "response"],
   "properties": {
     "status": {
-      "type": ["string", "number"]
+      "type": ["string", "number"],
+      "description": "Response status code or message"
     },
     "response": {
       "type": "object",
-      "description": "Inventory data wrapper"
+      "description": "Inventory data wrapper with product availability",
+      "properties": {
+        "inventory_details": {
+          "type": "object",
+          "description": "Map of SKU IDs to inventory data"
+        }
+      },
+      "additionalProperties": true
     }
-  }
+  },
+  "additionalProperties": true
 }

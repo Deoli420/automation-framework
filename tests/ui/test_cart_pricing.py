@@ -6,8 +6,9 @@ prices sum up to the displayed cart total. Catches stale caches,
 rounding errors, and calculation mismatches.
 
 IMPORTANT: Nykaa's cart (/checkout/cart) requires authentication.
-Guest users see an error/redirect. All cart pricing tests are marked
-with ``@pytest.mark.auth_required`` and skipped by default.
+Guest users see an error/redirect. The class-level
+``@pytest.mark.auth_required`` marker triggers auto-skip via
+``conftest.pytest_collection_modifyitems``.
 """
 
 import pytest
@@ -19,9 +20,6 @@ from pages.home_page import HomePage
 from pages.product_page import ProductPage
 from pages.search_results_page import SearchResultsPage
 from utils.waits import window_count_greater_than, page_has_loaded
-
-
-_AUTH_SKIP = "Cart requires authentication — no login fixture available"
 
 
 @pytest.mark.ui
@@ -66,7 +64,6 @@ class TestCartPricing:
         )
         return cart
 
-    @pytest.mark.skip(reason=_AUTH_SKIP)
     def test_cart_total_matches_item_sum(self, driver):
         """
         Verify displayed total matches sum of individual item prices.
@@ -90,7 +87,6 @@ class TestCartPricing:
             f"(difference: {breakdown.difference})"
         )
 
-    @pytest.mark.skip(reason=_AUTH_SKIP)
     def test_product_price_matches_cart_price(self, driver):
         """
         Verify the price shown on PDP matches the price in cart.
