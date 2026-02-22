@@ -34,7 +34,7 @@ class HomePage(BasePage):
         "[class*='suggestion'], [class*='autocomplete'], "
         "[class*='searchSuggestion']",
     )
-    LOGO = (By.CSS_SELECTOR, "header img, a[href='/'] img")
+    LOGO = (By.CSS_SELECTOR, "a[title='logo'], header svg, header img, a[href='/'] img")
     NAV_CATEGORIES = (By.CSS_SELECTOR, "nav a, header nav a")
 
     def __init__(self, driver: WebDriver) -> None:
