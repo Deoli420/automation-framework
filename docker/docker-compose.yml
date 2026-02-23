@@ -39,6 +39,11 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     restart: "no"
+    command: >
+      pytest -v -n 3
+        --html=reports/report.html --self-contained-html
+        --junitxml=reports/results.xml
+        --alluredir=reports/allure-results
     environment:
       - AUTO_HEADLESS=true
       - AUTO_SELENIUM_REMOTE_URL=http://selenium-chrome:4444/wd/hub

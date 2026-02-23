@@ -72,7 +72,7 @@ jobs:
           path: reports/
           retention-days: 30
 
-  # ── UI Smoke Tests (fast feedback on every push/PR) ─────────────────
+  # ── UI Smoke Tests (parallel via Selenium Grid) ─────────────────────
   ui-smoke:
     name: UI Smoke
     runs-on: ubuntu-latest
@@ -80,19 +80,31 @@ jobs:
     permissions:
       contents: write
 
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size=2g
+          --health-cmd="curl -f http://localhost:4444/wd/hub/status || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=30s
+        env:
+          SE_NODE_MAX_SESSIONS: 3
+          SE_NODE_OVERRIDE_MAX_SESSIONS: true
+          SE_SESSION_REQUEST_TIMEOUT: 300
+
     env:
-      AUTO_SELENIUM_REMOTE_URL: ""
+      AUTO_SELENIUM_REMOTE_URL: "http://localhost:4444/wd/hub"
       AUTO_PAGE_LOAD_TIMEOUT: "60"
       AUTO_EXPLICIT_WAIT: "20"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
 
       - name: Set up Python 3.13
         uses: actions/setup-python@v5
@@ -103,11 +115,16 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run UI smoke tests
+      - name: Wait for Selenium Grid
+        run: |
+          timeout 60 bash -c 'until curl -sf http://localhost:4444/wd/hub/status | grep -q "ready.*true"; do sleep 2; done'
+
+      - name: Run UI smoke tests (3 workers)
         run: |
           mkdir -p reports/allure-results
           pytest tests/ui/ \
             -v \
+            -n 3 \
             -m "smoke and not auth_required" \
             --reruns=1 \
             --reruns-delay=3 \
@@ -139,30 +156,42 @@ jobs:
           path: reports/
           retention-days: 30
 
-  # ── UI Regression Tests (full suite — nightly + manual) ────────────
+  # ── UI Regression Tests (parallel via Selenium Grid — nightly + manual)
   ui-regression:
     name: UI Regression
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 25
     if: >-
       github.event_name == 'schedule' ||
       github.event.inputs.test_suite == 'all' ||
       github.event.inputs.test_suite == 'regression' ||
       github.event.inputs.test_suite == 'ui'
 
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size=2g
+          --health-cmd="curl -f http://localhost:4444/wd/hub/status || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=30s
+        env:
+          SE_NODE_MAX_SESSIONS: 3
+          SE_NODE_OVERRIDE_MAX_SESSIONS: true
+          SE_SESSION_REQUEST_TIMEOUT: 300
+
     env:
-      AUTO_SELENIUM_REMOTE_URL: ""
+      AUTO_SELENIUM_REMOTE_URL: "http://localhost:4444/wd/hub"
       AUTO_PAGE_LOAD_TIMEOUT: "60"
       AUTO_EXPLICIT_WAIT: "20"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
 
       - name: Set up Python 3.13
         uses: actions/setup-python@v5
@@ -173,11 +202,16 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run UI regression tests
+      - name: Wait for Selenium Grid
+        run: |
+          timeout 60 bash -c 'until curl -sf http://localhost:4444/wd/hub/status | grep -q "ready.*true"; do sleep 2; done'
+
+      - name: Run UI regression tests (3 workers)
         run: |
           mkdir -p reports/allure-results
           pytest tests/ui/ \
             -v \
+            -n 3 \
             -m "not auth_required" \
             --reruns=2 \
             --reruns-delay=3 \
