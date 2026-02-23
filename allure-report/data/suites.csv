@@ -1,37 +1,10 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"Verify navigating to an invalid product URL doesn't crash.","1121","test_invalid_product_url","tests.ui","2026-02-23","passed","2026-02-23","TestNegative","test_negative","",""
-"
-Navigate to a product page, read the UI selling price,
-then query the inventory API for the same product ID.
-Assert they match within tolerance.
-","92444","test_pdp_price_matches_api_price","tests.ui","2026-02-23","skipped","2026-02-23","TestCrossLayerPrice","test_cross_layer","",""
-"Verify that applying a filter changes the results.","109114","test_results_change_after_filter","tests.ui","2026-02-23","skipped","2026-02-23","TestFilters","test_filters","",""
-"Verify empty cart page shows appropriate message.","0","test_empty_cart_shows_message","tests.ui","2026-02-23","skipped","2026-02-23","TestCart","test_cart","",""
-"Verify product page displays a title.","100545","test_product_page_has_title","tests.ui","2026-02-23","failed","2026-02-23","TestProductPage","test_product_page","",""
-"Verify that filter/sidebar section appears on search results.","88238","test_search_results_have_filter_section","tests.ui","2026-02-23","passed","2026-02-23","TestFilters","test_filters","",""
-"Verify search bar is visible after popup dismissal.","71513","test_search_bar_is_visible","tests.ui","2026-02-23","passed","2026-02-23","TestHomepage","test_homepage","",""
-"Verify site handles a 500-character search query.","88164","test_search_very_long_query","tests.ui","2026-02-23","passed","2026-02-23","TestNegative","test_negative","",""
-"Verify a product can be removed from the cart.","0","test_remove_product_from_cart","tests.ui","2026-02-23","skipped","2026-02-23","TestCart","test_cart","",""
-"Verify Unicode input (emoji, CJK) is handled gracefully.","71901","test_search_unicode_characters","tests.ui","2026-02-23","broken","2026-02-23","TestNegative","test_negative","",""
-"Verify Nykaa logo/header image is present.","71444","test_logo_is_present","tests.ui","2026-02-23","passed","2026-02-23","TestHomepage","test_homepage","",""
-"Verify cart displays item prices.","0","test_cart_shows_product_price","tests.ui","2026-02-23","skipped","2026-02-23","TestCart","test_cart","",""
-"Verify Nykaa homepage loads without errors.","72554","test_homepage_loads_successfully","tests.ui","2026-02-23","passed","2026-02-23","TestHomepage","test_homepage","",""
-"
-Verify the price shown on PDP matches the price in cart.
-
-Catches: CDN caching issues, price update propagation delays.
-","0","test_product_price_matches_cart_price","tests.ui","2026-02-23","skipped","2026-02-23","TestCartPricing","test_cart_pricing","",""
-"
-Verify displayed total matches sum of individual item prices.
-
-This is the most critical pricing check — catches:
-- Stale price caches
-- Rounding errors in tax/discount calculations
-- Frontend-backend price mismatches
-","0","test_cart_total_matches_item_sum","tests.ui","2026-02-23","skipped","2026-02-23","TestCartPricing","test_cart_pricing","",""
-"Verify search results page structure is intact.","89494","test_search_results_page_loads","tests.ui","2026-02-23","passed","2026-02-23","TestFilters","test_filters","",""
-"Verify a product can be added to the cart.","0","test_add_product_to_cart","tests.ui","2026-02-23","skipped","2026-02-23","TestCart","test_cart","",""
-"Verify gibberish search shows no-results state or fallback.","119177","test_search_gibberish_returns_no_results_or_fallback","tests.ui","2026-02-23","passed","2026-02-23","TestNegative","test_negative","",""
-"Verify site handles XSS-style input safely.","87781","test_search_xss_string","tests.ui","2026-02-23","passed","2026-02-23","TestNegative","test_negative","",""
-"Verify SQL injection-style input is handled safely.","87129","test_search_sql_injection_string","tests.ui","2026-02-23","passed","2026-02-23","TestNegative","test_negative","",""
-"Verify product page displays a valid price.","99409","test_product_page_has_price","tests.ui","2026-02-23","failed","2026-02-23","TestProductPage","test_product_page","",""
+"Verify navigating to an invalid product URL doesn't crash.","929","test_invalid_product_url","tests.ui","2026-02-23","passed","2026-02-23","TestNegative","test_negative","",""
+"Verify product page displays a title.","105367","test_product_page_has_title","tests.ui","2026-02-23","failed","2026-02-23","TestProductPage","test_product_page","",""
+"Verify that submitting empty search doesn't navigate away.","71454","test_search_empty_query_stays_on_page","tests.ui","2026-02-23","passed","2026-02-23","TestSearch","test_search","",""
+"Verify site handles XSS-style input safely.","91688","test_search_xss_string","tests.ui","2026-02-23","passed","2026-02-23","TestNegative","test_negative","",""
+"Verify Nykaa homepage loads without errors.","72713","test_homepage_loads_successfully","tests.ui","2026-02-23","passed","2026-02-23","TestHomepage","test_homepage","",""
+"Verify that searching for a common product returns results.","92862","test_search_returns_results","tests.ui","2026-02-23","passed","2026-02-23","TestSearch","test_search","",""
+"Verify Nykaa logo/header image is present.","71283","test_logo_is_present","tests.ui","2026-02-23","passed","2026-02-23","TestHomepage","test_homepage","",""
+"Verify search results contain product cards with prices.","93403","test_search_results_have_products","tests.ui","2026-02-23","passed","2026-02-23","TestSearch","test_search","",""
+"Verify search bar is visible after popup dismissal.","71678","test_search_bar_is_visible","tests.ui","2026-02-23","passed","2026-02-23","TestHomepage","test_homepage","",""
