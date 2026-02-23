@@ -1,0 +1,10 @@
+{"timestamp": "2026-02-23T15:58:50.362423+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
+{"timestamp": "2026-02-23T15:58:50.363315+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
+{"timestamp": "2026-02-23T16:00:04.465892+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
+{"timestamp": "2026-02-23T16:00:04.466093+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: 'maybelline fit me foundation'", "module": "home_page", "function": "search_product", "line": 56}
+{"timestamp": "2026-02-23T16:00:21.130629+00:00", "level": "INFO", "logger": "pages.search_results_page", "message": "Clicking first product card", "module": "search_results_page", "function": "click_first_product", "line": 93}
+{"timestamp": "2026-02-23T16:00:22.643708+00:00", "level": "INFO", "logger": "tests.ui.test_cross_layer", "message": "UI layer: product_id=408011, price=280.00", "module": "test_cross_layer", "function": "test_pdp_price_matches_api_price", "line": 71}
+{"timestamp": "2026-02-23T16:00:22.644042+00:00", "level": "INFO", "logger": "services.product_service", "message": "API inventory check: id=408011", "module": "product_service", "function": "get_product_details", "line": 48}
+{"timestamp": "2026-02-23T16:00:22.644187+00:00", "level": "INFO", "logger": "services.api_client", "message": "GET https://www.nykaa.com/gateway-api/inventory/data/json/ params={'productId': '408011'}", "module": "api_client", "function": "_request", "line": 101}
+{"timestamp": "2026-02-23T16:00:22.806186+00:00", "level": "INFO", "logger": "services.api_client", "message": "Response: 403 in 161.8ms (424 bytes)", "module": "api_client", "function": "_request", "line": 122}
+{"timestamp": "2026-02-23T16:00:22.922350+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}

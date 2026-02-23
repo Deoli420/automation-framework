@@ -1,0 +1,5 @@
+{"timestamp": "2026-02-23T16:00:23.177226+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
+{"timestamp": "2026-02-23T16:00:23.178186+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
+{"timestamp": "2026-02-23T16:01:34.638881+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
+{"timestamp": "2026-02-23T16:01:34.639092+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: 'neutrogena sunscreen spf 50'", "module": "home_page", "function": "search_product", "line": 56}
+{"timestamp": "2026-02-23T16:01:51.521876+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}
