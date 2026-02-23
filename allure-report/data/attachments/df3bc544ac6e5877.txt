@@ -1,7 +1,0 @@
-{"timestamp": "2026-02-23T18:09:25.627265+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
-{"timestamp": "2026-02-23T18:09:25.628254+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
-{"timestamp": "2026-02-23T18:10:38.101803+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
-{"timestamp": "2026-02-23T18:10:38.101982+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: 'nykaa matte lipstick'", "module": "home_page", "function": "search_product", "line": 56}
-{"timestamp": "2026-02-23T18:11:01.349319+00:00", "level": "INFO", "logger": "pages.search_results_page", "message": "Clicking first product card", "module": "search_results_page", "function": "click_first_product", "line": 93}
-{"timestamp": "2026-02-23T18:11:13.447247+00:00", "level": "INFO", "logger": "utils.screenshot", "message": "Screenshot captured: reports/screenshots/FAIL_test_product_page_has_title_20260223_181113.png", "module": "screenshot", "function": "capture_screenshot", "line": 40}
-{"timestamp": "2026-02-23T18:11:13.580468+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}
