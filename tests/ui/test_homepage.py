@@ -35,6 +35,7 @@ class TestHomepage:
 
         assert home.is_loaded(), "Search bar not visible after page load"
 
+    @pytest.mark.regression
     def test_logo_is_present(self, driver):
         """Verify Nykaa logo/header image is present."""
         home = HomePage(driver)

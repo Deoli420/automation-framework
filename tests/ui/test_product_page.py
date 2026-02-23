@@ -53,6 +53,7 @@ class TestProductPage:
         )
         return ProductPage(driver)
 
+    @pytest.mark.smoke
     def test_product_page_has_title(self, driver):
         """Verify product page displays a title."""
         product = self._navigate_to_first_product(driver)

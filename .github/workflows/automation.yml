@@ -72,16 +72,18 @@ jobs:
           path: reports/
           retention-days: 30
 
-  # ── UI Tests (requires Selenium) ────────────────────────────────────
-  ui-tests:
-    name: UI Automation
+  # ── UI Smoke Tests (fast feedback on every push/PR) ─────────────────
+  ui-smoke:
+    name: UI Smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     permissions:
       contents: write
 
     env:
       AUTO_SELENIUM_REMOTE_URL: ""
+      AUTO_PAGE_LOAD_TIMEOUT: "60"
+      AUTO_EXPLICIT_WAIT: "20"
 
     steps:
       - name: Checkout
@@ -101,25 +103,19 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run UI tests
+      - name: Run UI smoke tests
         run: |
-          MARKER="${{ github.event.inputs.test_suite || '' }}"
-          MARKER_FLAG=""
-          if [ "$MARKER" != "" ] && [ "$MARKER" != "all" ]; then
-            MARKER_FLAG="-m $MARKER"
-          fi
-
           mkdir -p reports/allure-results
           pytest tests/ui/ \
             -v \
-            --reruns=2 \
+            -m "smoke and not auth_required" \
+            --reruns=1 \
             --reruns-delay=3 \
-            --html=reports/ui-report.html \
+            --html=reports/ui-smoke-report.html \
             --self-contained-html \
-            --junitxml=reports/ui-results.xml \
+            --junitxml=reports/ui-smoke-results.xml \
             --alluredir=reports/allure-results \
-            $MARKER_FLAG \
-            2>&1 | tee reports/ui-test.log
+            2>&1 | tee reports/ui-smoke.log
 
       - name: Generate Allure report
         if: always()
@@ -135,11 +131,73 @@ jobs:
           publish_dir: reports/allure-report
           destination_dir: allure-report
 
-      - name: Upload UI test artifacts
+      - name: Upload UI smoke artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-test-reports
+          name: ui-smoke-reports
+          path: reports/
+          retention-days: 30
+
+  # ── UI Regression Tests (full suite — nightly + manual) ────────────
+  ui-regression:
+    name: UI Regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.test_suite == 'all' ||
+      github.event.inputs.test_suite == 'regression' ||
+      github.event.inputs.test_suite == 'ui'
+
+    env:
+      AUTO_SELENIUM_REMOTE_URL: ""
+      AUTO_PAGE_LOAD_TIMEOUT: "60"
+      AUTO_EXPLICIT_WAIT: "20"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run UI regression tests
+        run: |
+          mkdir -p reports/allure-results
+          pytest tests/ui/ \
+            -v \
+            -m "not auth_required" \
+            --reruns=2 \
+            --reruns-delay=3 \
+            --html=reports/ui-regression-report.html \
+            --self-contained-html \
+            --junitxml=reports/ui-regression-results.xml \
+            --alluredir=reports/allure-results \
+            2>&1 | tee reports/ui-regression.log
+
+      - name: Generate Allure report
+        if: always()
+        run: |
+          npm install -g allure-commandline
+          allure generate reports/allure-results -o reports/allure-report --clean || true
+
+      - name: Upload UI regression artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-regression-reports
           path: reports/
           retention-days: 30
 

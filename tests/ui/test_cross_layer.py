@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.ui
 @pytest.mark.cross_layer
+@pytest.mark.regression
 class TestCrossLayerPrice:
     """Cross-layer price validation: UI DOM vs inventory API."""
 

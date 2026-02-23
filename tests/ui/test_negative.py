@@ -23,6 +23,7 @@ from pages.search_results_page import SearchResultsPage
 class TestNegative:
     """Negative and boundary UI tests."""
 
+    @pytest.mark.smoke
     def test_search_xss_string(self, driver):
         """Verify site handles XSS-style input safely."""
         home = HomePage(driver)
@@ -48,6 +49,7 @@ class TestNegative:
             "Long query caused unexpected navigation"
         )
 
+    @pytest.mark.smoke
     def test_invalid_product_url(self, driver):
         """Verify navigating to an invalid product URL doesn't crash."""
         driver.get("https://www.nykaa.com/nonexistent-product-xyz/p/9999999999")

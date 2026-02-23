@@ -22,6 +22,7 @@ from utils.waits import element_count_is_at_least
 
 @pytest.mark.ui
 @pytest.mark.search
+@pytest.mark.regression
 class TestFilters:
     """Filter application tests on search results page."""
 

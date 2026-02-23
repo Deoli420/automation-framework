@@ -18,10 +18,10 @@ from utils.data_generator import get_random_search_term
 
 @pytest.mark.ui
 @pytest.mark.search
-@pytest.mark.smoke
 class TestSearch:
     """Search flow tests."""
 
+    @pytest.mark.smoke
     def test_search_returns_results(self, driver):
         """Verify that searching for a common product returns results."""
         home = HomePage(driver)
@@ -34,6 +34,7 @@ class TestSearch:
             "Search for 'maybelline foundation' returned no results"
         )
 
+    @pytest.mark.smoke
     def test_search_results_have_products(self, driver):
         """Verify search results contain product cards with prices."""
         home = HomePage(driver)
@@ -44,6 +45,7 @@ class TestSearch:
         count = results.get_product_count()
         assert count > 0, "No product cards found in search results"
 
+    @pytest.mark.regression
     def test_search_with_random_term(self, driver):
         """Verify search works with a randomly selected term."""
         term = get_random_search_term()
@@ -56,6 +58,7 @@ class TestSearch:
         # Most beauty product searches should return results
         assert results.has_results(), f"Search for '{term}' returned no results"
 
+    @pytest.mark.smoke
     def test_search_empty_query_stays_on_page(self, driver):
         """Verify that submitting empty search doesn't navigate away."""
         home = HomePage(driver)
@@ -69,6 +72,7 @@ class TestSearch:
             f"Empty search navigated to unexpected URL: {current_url}"
         )
 
+    @pytest.mark.regression
     @pytest.mark.parametrize(
         "term",
         [
