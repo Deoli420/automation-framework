@@ -1,0 +1,6 @@
+{"timestamp": "2026-02-23T16:15:02.938806+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
+{"timestamp": "2026-02-23T16:15:02.939525+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
+{"timestamp": "2026-02-23T16:16:14.234315+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
+{"timestamp": "2026-02-23T16:16:14.234472+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: '\u7f8e\u5bb9 serum \ud83c\udf38'", "module": "home_page", "function": "search_product", "line": 56}
+{"timestamp": "2026-02-23T16:16:14.680031+00:00", "level": "INFO", "logger": "utils.screenshot", "message": "Screenshot captured: reports/screenshots/FAIL_test_search_unicode_characters_20260223_161614.png", "module": "screenshot", "function": "capture_screenshot", "line": 40}
+{"timestamp": "2026-02-23T16:16:14.757988+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}
