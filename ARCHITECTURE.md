@@ -191,8 +191,7 @@ Typos in env vars (like `AUTO_BROWSR=firefox`) are silently ignored instead of c
 |-------------|----------|--------|-------------------|
 | **Local** | Local Chrome binary | `local.env` | `webdriver.Chrome()` — direct |
 | **Docker Compose** | `selenium-chrome` container | `ci.env` | `webdriver.Remote(url)` |
-| **GitHub Actions** | `browser-actions/setup-chrome` on runner | CI env vars | `webdriver.Chrome()` — direct |
-| **Future Grid** | Selenium Hub + nodes | `staging.env` | `webdriver.Remote(url)` |
+| **GitHub Actions** | `selenium/standalone-chrome` service container | CI env vars | `webdriver.Remote(url)` via Selenium Grid |
 
 ### The Single Integration Point
 ```python
@@ -204,25 +203,45 @@ class DriverFactory:
         return DriverFactory._create_local_driver()
 ```
 
-Switching from local to Docker to CI to Grid is **one environment variable**: `AUTO_SELENIUM_REMOTE_URL`. When empty → local Chrome. When set → Remote WebDriver.
+Switching from local to Docker to CI to Grid is **one environment variable**: `AUTO_SELENIUM_REMOTE_URL`. When empty → local Chrome. When set → Remote WebDriver connecting to Selenium Grid.
 
-### Why CI Uses Local Chrome (Not Docker Service)
+### Selenium Grid in CI — Parallel Test Execution
 
-GitHub Actions initially used `selenium/standalone-chrome` as a Docker service container. This approach consistently failed with "Docker build failed" errors — the Selenium Docker images are large (~1.5GB), prone to Docker Hub rate limits, and the health-check dance adds fragility.
+Both UI CI jobs use `selenium/standalone-chrome` as a GitHub Actions service container. The container runs alongside the runner, exposing Selenium Grid on `localhost:4444`. Key configuration:
 
-The fix: install Chrome directly on the runner with `browser-actions/setup-chrome@v1` and set `AUTO_SELENIUM_REMOTE_URL=""`. This makes CI behave like a local run — `DriverFactory` creates `webdriver.Chrome()` with headless mode. Benefits:
-- **Faster startup**: No Docker pull, no health-check wait loop
-- **More reliable**: No Docker Hub rate limits, no container networking issues
-- **Simpler debugging**: Chrome runs in the same process space as pytest
+- **`SE_NODE_MAX_SESSIONS=3`** — Allows 3 concurrent Chrome sessions in one container
+- **`--shm-size=2g`** — Chrome needs shared memory; Docker's default 64MB causes tab crashes
+- **Health check** with 30s start period — Container needs time to download ChromeDriver on first boot
+- **`pytest-xdist -n 3`** — Distributes tests across 3 workers, each connecting to the Grid via `webdriver.Remote()`
 
-Docker Compose (`docker/docker-compose.yml`) still exists for local testing with `selenium/standalone-chrome`, noVNC at port 7900 for visual debugging, and as the upgrade path to Selenium Grid.
+Each xdist worker is a separate process with its own function-scoped `driver` fixture. Worker 1 runs test A, Worker 2 runs test B, Worker 3 runs test C — all simultaneously, each with its own Chrome session in the Selenium Grid container.
 
-### 3-Job Pipeline
-1. **API Tests** (fast, ~2 min) — No browser needed. Runs `pytest tests/api/ -n 2` with parallel execution.
-2. **UI Tests** (~10 min) — Chrome installed on runner via `setup-chrome`, reruns 2x on flaky failures, Allure report generation.
-3. **Performance Tests** (optional, ~5 min) — JMeter with caching (83MB saved per run). Only runs on schedule or manual trigger.
+### Why Selenium Grid (Not Local Chrome)
 
-Jobs run in parallel. Fast API feedback in 2 minutes; full results in 10.
+The previous approach installed Chrome directly on the runner with `browser-actions/setup-chrome@v1`. This worked but only supported **serial execution** — one Chrome instance at a time. With Nykaa page loads taking ~70s from Azure runners (US → India), serial execution meant:
+- Smoke (8 tests): ~9 min of pure navigation
+- Regression (26 tests): ~30 min, exceeding CI timeouts
+
+Selenium Grid enables **parallel execution** — 3 tests running simultaneously reduces wall-clock time by ~3×. The `selenium/standalone-chrome` image bundles Chrome + ChromeDriver + Grid in one container, so there's no multi-container orchestration overhead.
+
+### 4-Job Pipeline
+
+1. **API Validation** (fast, ~20s) — No browser. `pytest tests/api/ -n 2` with parallel xdist workers.
+2. **UI Smoke** (~5 min, every push/PR) — 8 core tests via Selenium Grid with 3 workers. Deploys Allure report to GitHub Pages.
+3. **UI Regression** (~18 min, nightly + manual) — All 26 non-auth tests via Selenium Grid with 3 workers. Runs on schedule or `workflow_dispatch` with `test_suite=all|regression|ui`.
+4. **Performance / JMeter** (~1 min, manual + nightly) — Search load test with JMeter caching (83MB saved per run).
+
+All 4 jobs run in parallel. Fast API feedback in 20 seconds; full UI smoke in 5 minutes; complete regression + performance in ~18 minutes.
+
+### Smoke vs Regression Split
+
+Tests are categorized with pytest markers:
+
+- **`@pytest.mark.smoke`** (8 tests) — Core user flows: homepage loads, search works, product page renders, XSS/404 handling. Fast feedback on every push.
+- **`@pytest.mark.regression`** (remaining tests) — Parametrized searches, all filter tests, cross-layer price validation, edge cases. Full coverage on nightly schedule.
+- **`@pytest.mark.auth_required`** (6 tests) — Cart tests, auto-skipped (no login fixture available).
+
+The `ui-smoke` job runs `-m "smoke and not auth_required"`. The `ui-regression` job runs `-m "not auth_required"` (all tests including smoke).
 
 ---
 
@@ -274,4 +293,4 @@ Instead of adding `@pytest.mark.skip(reason=...)` to every cart test (6 places),
 | `utils/retry.py` | Retry decorator | 3 attempts, 0.5s delay, StaleElement |
 | `conftest.py` | Root fixtures | auth_required auto-skip hook |
 | `fixtures/expected_schemas/` | JSON Schema Draft-07 | Required fields + nested validation |
-| `.github/workflows/automation.yml` | CI pipeline | 3 jobs, JMeter caching, Allure report |
+| `.github/workflows/automation.yml` | CI pipeline | 4 jobs, Selenium Grid parallel, Allure to GitHub Pages |
