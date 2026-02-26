@@ -1,0 +1,5 @@
+{"timestamp": "2026-02-26T21:06:08.912336+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
+{"timestamp": "2026-02-26T21:06:08.913089+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
+{"timestamp": "2026-02-26T21:07:20.277019+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
+{"timestamp": "2026-02-26T21:07:20.277192+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: 'vitamin c serum for oily skin'", "module": "home_page", "function": "search_product", "line": 56}
+{"timestamp": "2026-02-26T21:07:42.427035+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}
