@@ -1,5 +1,0 @@
-{"timestamp": "2026-03-20T21:01:07.201725+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
-{"timestamp": "2026-03-20T21:01:07.202367+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
-{"timestamp": "2026-03-20T21:02:18.639420+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
-{"timestamp": "2026-03-20T21:02:18.661652+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: ''", "module": "home_page", "function": "search_product", "line": 56}
-{"timestamp": "2026-03-20T21:02:18.892882+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}

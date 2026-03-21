@@ -1,0 +1,5 @@
+{"timestamp": "2026-03-21T20:53:10.318462+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
+{"timestamp": "2026-03-21T20:53:10.319692+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
+{"timestamp": "2026-03-21T20:54:22.171799+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
+{"timestamp": "2026-03-21T20:54:22.171958+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: 'maybelline foundation'", "module": "home_page", "function": "search_product", "line": 56}
+{"timestamp": "2026-03-21T20:54:44.290284+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}
