@@ -1,0 +1,2 @@
+{"timestamp": "2026-05-31T21:32:25.706558+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
+{"timestamp": "2026-05-31T21:32:29.118469+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}
