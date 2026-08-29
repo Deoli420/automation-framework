@@ -1,0 +1,6 @@
+{"timestamp": "2026-08-29T22:44:52.602908+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver created: chrome", "module": "conftest", "function": "driver", "line": 84}
+{"timestamp": "2026-08-29T22:44:52.603875+00:00", "level": "INFO", "logger": "core.base_page", "message": "Navigating to https://www.nykaa.com/", "module": "base_page", "function": "open", "line": 56}
+{"timestamp": "2026-08-29T22:46:05.229363+00:00", "level": "INFO", "logger": "pages.home_page", "message": "HomePage loaded", "module": "home_page", "function": "navigate", "line": 51}
+{"timestamp": "2026-08-29T22:46:05.229586+00:00", "level": "INFO", "logger": "pages.home_page", "message": "Searching for: 'nykaa matte lipstick'", "module": "home_page", "function": "search_product", "line": 56}
+{"timestamp": "2026-08-29T22:46:30.283778+00:00", "level": "INFO", "logger": "pages.search_results_page", "message": "Clicking first product card", "module": "search_results_page", "function": "click_first_product", "line": 93}
+{"timestamp": "2026-08-29T22:46:32.394072+00:00", "level": "INFO", "logger": "conftest", "message": "WebDriver quit", "module": "conftest", "function": "driver", "line": 94}
