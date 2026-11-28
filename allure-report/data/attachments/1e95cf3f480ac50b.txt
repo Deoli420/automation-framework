@@ -1,0 +1,5 @@
+INFO     conftest:conftest.py:84 WebDriver created: chrome
+INFO     core.base_page:base_page.py:56 Navigating to https://www.nykaa.com/
+INFO     pages.home_page:home_page.py:51 HomePage loaded
+INFO     pages.home_page:home_page.py:56 Searching for: ''
+INFO     conftest:conftest.py:94 WebDriver quit
